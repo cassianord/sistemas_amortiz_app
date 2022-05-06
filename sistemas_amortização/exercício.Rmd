@@ -1,0 +1,18 @@
+---
+title: "Exercício"
+output: html_notebook
+---
+
+* 1 - Entrar no <a href="http://www8.caixa.gov.br/siopiinternet-web/simulaOperacaoInternet.do?method=inicializarCasoUso" target="_blank"> simulador de financiamento habitacional da Caixa Econômica</a> e simular um financiamento com as opções "Pessoa Física", "Residencial" e "Aquisição de Imóvel Novo". Definir o valor em 400.000,00, e a localização para Florianópolis. 
+
+* 2 - Preencher as demais informações e fazer a simulação. 
+
+* 3 - Obter da simulação a taxa de juros, o prazo e o valor financiado.
+
+* 4 - Com esses valores, fazer uma tabela SAC e uma tabela SPC.
+
+* 5 - Responda: qual o sistema de amortização adotado pela caixa?
+
+* 6 - Responda: os valores da simulação são iguais aos da tabela equivalente? Se não, qual a causa da discrepância?
+
+

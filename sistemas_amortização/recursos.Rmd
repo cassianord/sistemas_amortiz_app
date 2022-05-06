@@ -1,0 +1,10 @@
+---
+title: "Recursos adicionais e código"
+output: html_notebook
+---
+
+* Planilha do excel para calcular SAC e SPC: <a href="https://brasil.io/" target="_blank">download</a>. 
+
+* Código fonte da aplicação em R disponível no <a href="https://brasil.io/" target="_blank">github</a>. 
+
+
