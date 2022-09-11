@@ -3,8 +3,9 @@ title: "Recursos adicionais e código"
 output: html_notebook
 ---
 
-* Planilha do excel para calcular SAC e SPC: <a href="https://github.com/cassianord/sistemas_amortiz_app/raw/main/SISTEMAS%20DE%20AMORTIZA%C3%87%C3%83O.xlsx" target="_blank">download</a>. 
+* Planilha do excel para calcular SAC, SPC, SAM e equivalência entre taxas: <a href="https://github.com/cassianord/sistemas_amortiz_app/raw/main/SISTEMAS%20DE%20AMORTIZA%C3%87%C3%83O.xlsx" target="_blank">download</a>. 
 
 * Código fonte da aplicação em R disponível no <a href="https://github.com/cassianord/sistemas_amortiz_app/tree/main/sistemas_amortiza%C3%A7%C3%A3o" target="_blank">github</a>. 
 
 
+  

@@ -5,93 +5,87 @@ library("dplyr")
 library("lubridate")
 library("plotly")
 library("data.table")
+library("htmltools")
 
 options(scipen = 999)
 
 texto_intro <- HTML(paste0("<font color=\"#696969\"><font size=\"3\"> Aplicativo desenvolvido por <b>Cassiano Ricardo Dalberto</b>",  
-                           " para a aula de Sistemas de Amortização, da disciplina de Matemática Financeira Aplicada",
-                           " à Contabilidade (CCN6004) - UFSC, 06/05/2022</font></font>"))
+                        " para a disciplina de Análise de Investimentos (CNM7313)</font></font>"))
 
 
 ############## UI ##############
 
 ui <- fluidPage(theme = shinytheme("cerulean"),
+    
+    
+    titlePanel(fluidRow(
+        column(12, "Sistemas de Amortização"),
+        column(12,  texto_intro))),
+    
+    
+    navbarPage('',
+    
+    tabPanel('Gerar tabela e gráfico',
+    
+             # Painel lateral         
+    sidebarLayout(
+        sidebarPanel(
+            
+            radioButtons("tipo",
+                         "Escolha o Sistema",
+                         choices = c('SAC','SPC'),
+                         selected = 'SAC'),
+            
+            numericInput("principal",
+                         "Valor do Principal:",
+                         100000),
+            
+            numericInput("taxa",
+                         HTML('Taxa de Juros periódica: <br/>
+                          <span style="font-weight:normal"><font size="2">(em formato unitário, ex: 5% = 0.05)</font></span>'),
+                         0.05),
+            
+            numericInput("termo",
+                         "Nº de Períodos:",
+                         12),
+            
+            br(), 
+            actionButton("do", "Aplicar!"),
+            br(), 
+            
+            width = 2
+            
+        ),
+        
+        # Painel central
+        mainPanel(
+            
+            fluidRow(
+                column(5,DT::dataTableOutput("tabela")),
+                column(5, plotlyOutput("pizza"),
+                          htmlOutput("texto"), align="center")
+                )
                 
-                
-                titlePanel(fluidRow(
-                    column(12, "Sistemas de Amortização"),
-                    column(12,  texto_intro))),
-                
-                
-                navbarPage('',
-                           
-                           tabPanel('Gerar tabela e gráfico',
-                                    
-                                    # Painel lateral         
-                                    sidebarLayout(
-                                        sidebarPanel(
-                                            
-                                            radioButtons("tipo",
-                                                         "Escolha o Sistema",
-                                                         choices = c('SAC','SPC'),
-                                                         selected = 'SAC'),
-                                            
-                                            numericInput("principal",
-                                                         "Valor do Principal:",
-                                                         10000),
-                                            
-                                            numericInput("taxa",
-                                                         "Taxa de Juros:",
-                                                         1.005),
-                                            
-                                            numericInput("termo",
-                                                         "Nº de Períodos",
-                                                         12),
-                                            
-                                            br(), 
-                                            actionButton("do", "Aplicar!"),
-                                            br(), 
-                                            
-                                            width = 2
-                                            
-                                        ),
-                                        
-                                        # Painel central
-                                        mainPanel(
-                                            
-                                            fluidRow(
-                                                column(5,DT::dataTableOutput("tabela")),
-                                                column(5, plotlyOutput("pizza"),
-                                                       htmlOutput("texto"), align="center")
-                                            )
-                                            
-                                            
-                                            
-                                            ,
-                                            width = 10
-                                        )
-                                    )
-                                    
-                           ),    # end tab 1
-                           
-                           
-                           tabPanel("Recursos adicionais e código",
-                                    fluidPage(
-                                        br(),
-                                        includeMarkdown("recursos.Rmd")
-                                    ) # 
-                                    
-                           ),
-                           
-                           tabPanel("Exercício",
-                                    fluidPage(
-                                        br(),
-                                        includeMarkdown("exercicio.Rmd")
-                                    ) # 
-                                    
-                           )
-                           
-                ) # end navbarpage
+             
+                         
+            ,
+            width = 10
+        )
+    )
+    
+    ),    # end tab 1
+    
+    
+    tabPanel("Recursos adicionais e código",
+        fluidPage(
+            br(),
+            includeMarkdown("recursos.Rmd")
+        ) # 
+        
+    )
+         
+    
+    ) # end navbarpage
 )
 
 ############## SERVER ##############
@@ -100,7 +94,7 @@ server <- function(input, output) {
     
     
     spc_function = function(valor_principal, termo, taxa) {
-        
+         
         fpv = (1 - ((1 + taxa) ^ -(termo)))/taxa # Fator de valor presente
         pmt = valor_principal / fpv # prestação
         
@@ -130,7 +124,7 @@ server <- function(input, output) {
             balance[i] = round(outstanding_principal,2)
         }
         
-        data.frame('Período' = 1:termo, 'Juros' = interest, 'Amortização' = principal, 'Prestação' = payment, 'Saldo Devedor' = balance,
+        data.frame('Período' = 1:termo, 'Juros' = interest, 'Principal' = principal, 'Prestação' = payment, 'Saldo Devedor' = balance,
                    check.names = F) 
     }
     
@@ -165,7 +159,7 @@ server <- function(input, output) {
             balance[i] = round(outstanding_principal,2)
         }
         
-        data.frame('Período' = 1:termo, 'Juros' = interest, 'Amortização' = principal, 'Prestação' = payment, 'Saldo Devedor' = balance, 
+        data.frame('Período' = 1:termo, 'Juros' = interest, 'Principal' = principal, 'Prestação' = payment, 'Saldo Devedor' = balance, 
                    check.names = F) 
     }
     
@@ -175,13 +169,13 @@ server <- function(input, output) {
         # Calcular tabela segundo tipo de sistema
         if (input$tipo == "SPC"){
             
-            tab_amort <- spc_function(valor_principal = input$principal, termo = input$termo, taxa = input$taxa/100)
+            tab_amort <- spc_function(valor_principal = input$principal, termo = input$termo, taxa = input$taxa)
             
             return(tab_amort)
             
         }else{
             
-            tab_amort <- sac_function(valor_principal = input$principal, termo = input$termo, taxa = input$taxa/100)
+            tab_amort <- sac_function(valor_principal = input$principal, termo = input$termo, taxa = input$taxa)
             
             return(tab_amort)
         }
@@ -192,11 +186,11 @@ server <- function(input, output) {
         # Gráfico segundo tipo de sistema
         if (input$tipo == "SPC"){
             
-            tab_amort <- spc_function(valor_principal = input$principal, termo = input$termo, taxa = input$taxa/100)
+            tab_amort <- spc_function(valor_principal = input$principal, termo = input$termo, taxa = input$taxa)
             name = c("Principal", "Juros")
             start_bal = input$principal
             final_bal = tab_amort$Balance[input$termo]
-            principal = sum(tab_amort$Amortização)
+            principal = sum(tab_amort$Principal)
             interest = sum(tab_amort$Juros)
             values = c(principal, interest )
             dat = data.frame(cbind(name, values))
@@ -209,11 +203,11 @@ server <- function(input, output) {
             
         }else{
             
-            tab_amort <- sac_function(valor_principal = input$principal, termo = input$termo, taxa = input$taxa/100)
+            tab_amort <- sac_function(valor_principal = input$principal, termo = input$termo, taxa = input$taxa)
             name = c("Principal", "Juros")
             start_bal = input$principal
             final_bal = tab_amort$Balance[nrow(tab_amort)]
-            principal = sum(tab_amort$Amortização)
+            principal = sum(tab_amort$Principal)
             interest = sum(tab_amort$Juros)
             values = c(principal, interest )
             dat = data.frame(cbind(name, values))
@@ -230,26 +224,26 @@ server <- function(input, output) {
     output$tabela <- DT::renderDataTable(
         DT::datatable(
             tabela_data(),
-            rownames = F,
-            extensions = 'Buttons',
-            options = list(
-                language = list(url = '//cdn.datatables.net/plug-ins/1.10.11/i18n/Portuguese-Brasil.json'),
-                pageLength = 24,
-                searching = F,
-                ordering = F,
-                digits = 2,
-                dom = 'B',
-                buttons = list(
-                    list(extend = 'copy',
-                         text = "Copiar"), 
-                    'csv', 'excel', 'pdf')
-            )
-            
-        ) %>%
-            DT::formatRound(columns=c('Juros', 'Amortização', 'Prestação', 'Saldo Devedor'), digits=2)
+                rownames = F,
+                    extensions = 'Buttons',
+                options = list(
+                    language = list(url = '//cdn.datatables.net/plug-ins/1.10.11/i18n/Portuguese-Brasil.json'),
+                    pageLength = 24,
+                    searching = F,
+                    ordering = F,
+                    digits = 2,
+                    dom = 'B',
+                    buttons = list(
+                        list(extend = 'copy',
+                             text = "Copiar"), 
+                             'csv', 'excel', 'pdf')
+                )
+                
+            ) %>%
+            DT::formatRound(columns=c('Juros', 'Principal', 'Prestação', 'Saldo Devedor'), digits=2)
         
         
-        
+                
     )
     
     output$pizza <- renderPlotly({
@@ -269,7 +263,7 @@ server <- function(input, output) {
         dado_texto <- tibble(pizza_data())
         HTML(paste0("<b><font color=\"#696969\"><font size=\"4\">Valor Total: ", sum(dado_texto$values), "</font></font></b>"))
         
-    })
+        })
 }
 
 ###### RODAR ######
