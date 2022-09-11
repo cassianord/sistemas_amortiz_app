@@ -6,6 +6,7 @@ library("lubridate")
 library("plotly")
 library("data.table")
 library("htmltools")
+library("markdown")
 
 options(scipen = 999)
 
@@ -236,7 +237,12 @@ server <- function(input, output) {
                     buttons = list(
                         list(extend = 'copy',
                              text = "Copiar"), 
-                             'csv', 'excel', 'pdf')
+                        list(extend = 'csv', title = paste0("Sistemas de Amortização - Simulação com ", input$tipo),
+                             filename="Sistemas de Amortização - Simulação"),
+                        list(extend = 'excel',  title = paste0("Sistemas de Amortização - Simulação com ", input$tipo),
+                             filename="Sistemas de Amortização - Simulação"),
+                        list(extend = 'pdf', title = paste0("Sistemas de Amortização - Simulação com ", input$tipo),
+                             filename="Sistemas de Amortização - Simulação"))
                 )
                 
             ) %>%
