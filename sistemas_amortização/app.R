@@ -229,11 +229,13 @@ server <- function(input, output) {
                     extensions = 'Buttons',
                 options = list(
                     language = list(url = '//cdn.datatables.net/plug-ins/1.10.11/i18n/Portuguese-Brasil.json'),
-                    pageLength = 24,
+                    pageLength = 30,
+                    info = FALSE,
+                    lengthMenu = list(c(30, -1), c("30", "All")), 
                     searching = F,
                     ordering = F,
                     digits = 2,
-                    dom = 'B',
+                    dom = 'BIp',
                     buttons = list(
                         list(extend = 'copy',
                              text = "Copiar"), 
@@ -246,7 +248,8 @@ server <- function(input, output) {
                 )
                 
             ) %>%
-            DT::formatRound(columns=c('Juros', 'Principal', 'Prestação', 'Saldo Devedor'), digits=2)
+            DT::formatRound(columns=c('Juros', 'Principal', 'Prestação', 'Saldo Devedor'), digits=2, 
+                            mark = ".", dec.mark = ",")
         
         
                 
@@ -267,7 +270,9 @@ server <- function(input, output) {
     
     output$texto <- renderText({ 
         dado_texto <- tibble(pizza_data())
-        HTML(paste0("<b><font color=\"#696969\"><font size=\"4\">Valor Total: ", sum(dado_texto$values), "</font></font></b>"))
+        HTML(paste0("<b><font color=\"#696969\"><font size=\"4\">Valor Total: ", 
+                    format(round(as.numeric(sum(dado_texto$values)), 2), decimal.mark = ",", big.mark="."), 
+                    "</font></font></b>"))
         
         })
 }
